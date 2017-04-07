@@ -5,6 +5,7 @@ namespace Sergiors\Silex\Provider;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * @author Sérgio Rafael Siqueira <sergio@inbep.com.br>
@@ -27,11 +28,16 @@ final class FriendlyExceptionServiceProvider implements ServiceProviderInterface
             return $app['twig']->render($app['friendly_exception.notfound']);
         });
 
+        $app->error(function (AccessDeniedHttpException $e) use ($app) {
+            return $app['twig']->render($app['friendly_exception.accessdenied']);
+        });
+
         $app->error(function (\Exception $e) use ($app) {
             return $app['twig']->render($app['friendly_exception.exception']);
         });
 
         $app['friendly_exception.notfound'] = 'notfound.html.twig';
+        $app['friendly_exception.accessdenied'] = 'accessdenied.html.twig';
         $app['friendly_exception.exception'] = 'exception.html.twig';
     }
 }
